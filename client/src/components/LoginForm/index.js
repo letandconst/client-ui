@@ -1,34 +1,63 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Form, Input, Button, Card } from "antd";
+const initialState = {
+  username: "",
+  password: "",
+  err: "",
+  success: "",
+};
+
+const { useForm } = Form;
 
 const LoginForm = () => {
-  const onFinish = (values) => {
-    console.log("Success:", values);
+  const [formHandler] = useForm();
+  const [user, setUser] = useState(initialState);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUser({ ...user, [name]: value, err: "", success: "" });
   };
 
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
+  const onFinish = async (e) => {
+    try {
+      const res = await axios.post("http://localhost:5000/api/login", {
+        username,
+        password,
+      });
+      setUser({
+        ...user,
+        err: "",
+        success: res.data.msg,
+      });
+      console.log(res.data);
+    } catch (err) {
+      err.response.data.msg &&
+        setUser({
+          ...user,
+          err: err.response.data.msg,
+          success: "",
+        });
+    }
   };
 
+  const { username, password, err, success } = user;
   return (
     <Card title="MEMBER LOGIN" style={{ width: 500 }}>
       <Form
-        name="basic"
-        initialValues={{
-          remember: true,
-        }}
+        name="login-form"
         onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
         autoComplete="off"
+        form={formHandler}
       >
-        <Form.Item label="Username" name="username">
-          <Input />
+        {err}
+        <Form.Item label="Username">
+          <Input onChange={handleChange} name="username" />
         </Form.Item>
 
-        <Form.Item label="Password" name="password">
-          <Input.Password />
+        <Form.Item label="Password">
+          <Input.Password onChange={handleChange} name="password" />
         </Form.Item>
-
         <Form.Item
           labelCol={{
             span: 8,
