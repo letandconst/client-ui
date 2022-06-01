@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, Card } from "antd";
 const initialState = {
   username: "",
@@ -11,6 +12,7 @@ const initialState = {
 const { useForm } = Form;
 
 const LoginForm = () => {
+  const navigate = useNavigate();
   const [formHandler] = useForm();
   const [user, setUser] = useState(initialState);
 
@@ -30,18 +32,29 @@ const LoginForm = () => {
         err: "",
         success: res.data.msg,
       });
-      console.log(res.data);
+      localStorage.setItem("user", res.data.token);
+      console.log(res.data.token);
+      navigate("/dashboard");
     } catch (err) {
-      err.response.data.msg &&
+      err.res.data.msg &&
         setUser({
           ...user,
-          err: err.response.data.msg,
+          err: err.res.data.msg,
           success: "",
         });
     }
   };
 
   const { username, password, err, success } = user;
+
+  useEffect(() => {
+    const loggedInUser = localStorage.getItem("user");
+    if (loggedInUser) {
+      const foundUser = JSON.parse(loggedInUser);
+      setUser(foundUser);
+    }
+  }, []);
+
   return (
     <Card title="MEMBER LOGIN" style={{ width: 500 }}>
       <Form
