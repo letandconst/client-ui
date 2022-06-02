@@ -36,6 +36,7 @@ const Mechanics = () => {
   };
   const closeModal = (data) => {
     setOpen(false);
+    setModalData(data);
   };
 
   const handleDelete = (e) => {

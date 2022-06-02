@@ -4,19 +4,28 @@ import axios from "axios";
 
 const { useForm } = Form;
 
+const initialState = {
+  mechanicAddress: "",
+  mechanicPhone: "",
+  err: "",
+  success: "",
+};
+
 const UpdateMechanicModal = ({ close, open, data, id }) => {
   const [formHandler] = useForm();
 
-  const [newDetails, setNewDetails] = useState({
-    mechanicAddress: "",
-    mechanicPhone: "",
-  });
+  const [mechanic, setMechanic] = useState(initialState);
 
-  const { mechanicAddress, mechanicPhone } = newDetails;
+  // const [newDetails, setNewDetails] = useState({
+  //   mechanicAddress: "",
+  //   mechanicPhone: "",
+  // });
+
+  const { mechanicAddress, mechanicPhone } = mechanic;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setNewDetails({ ...newDetails, [name]: value });
+    setMechanic({ ...mechanic, [name]: value, err: "", success: "" });
   };
 
   // const handleUpdate = async (e) => {
@@ -30,7 +39,7 @@ const UpdateMechanicModal = ({ close, open, data, id }) => {
   //         mechanicPhone,
   //       }
   //     );
-  //     setNewDetails({
+  //     setNewMechanic({
   //       ...newDetails,
   //       err: "",
   //       success: res.data.msg,
@@ -71,18 +80,28 @@ const UpdateMechanicModal = ({ close, open, data, id }) => {
         </Form.Item>
         <Form.Item label="Address">
           <Input
+            name="mechanicAddress"
+            onChange={handleChange}
+            defaultValue={data.mechanicAddress}
+          />
+          {/* <input
             type="text"
             name="mechanicAddress"
             onChange={handleChange}
-            value={data.mechanicAddress}
-          />
+            defaultValue={data.mechanicAddress}
+          /> */}
         </Form.Item>
         <Form.Item label="Phone">
           <Input
             name="mechanicPhone"
-            value={data.mechanicPhone}
+            defaultValue={data.mechanicPhone}
             onChange={handleChange}
           />
+          {/* <input
+            name="mechanicPhone"
+            defaultValue={data.mechanicPhone}
+            onChange={handleChange}
+          /> */}
         </Form.Item>
       </Form>
     </Modal>
